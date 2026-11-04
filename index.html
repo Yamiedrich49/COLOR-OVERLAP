@@ -1,93 +1,623 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#f7f5f0" />
-<title>PAPER STACK — 見えない部分を考えるパズル</title>
+<meta name="theme-color" content="#f7f6f2" />
+<title>PAPER STACK — 自由配置パズル</title>
 <style>
-:root{--bg:#f7f5f0;--paper:#fff;--ink:#293441;--sub:#77818b;--line:#e5e3dc;--dark:#263849;--shadow:0 8px 30px rgba(36,52,59,.045);--a:#ec8675;--b:#6f9dca;--c:#e5b85f;--d:#79ad9d}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Yu Gothic',Meiryo,sans-serif;-webkit-font-smoothing:antialiased}button{font:inherit;cursor:pointer}button:focus-visible,.stack-card:focus-visible{outline:3px solid #8daec7;outline-offset:3px}button:disabled{cursor:default;opacity:.45}
-.wrapper{max-width:1000px;margin:auto;padding:23px 20px 70px}header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:26px}.brand{display:flex;align-items:center;gap:10px;color:var(--ink);letter-spacing:.14em;font-size:13px;font-weight:850}.logo{height:30px;width:30px;display:grid;place-items:center;border:1.5px solid #263849;border-radius:9px;font-size:19px;line-height:1;letter-spacing:0}.header-status{font-size:11px;letter-spacing:.11em;color:#8a9299;font-weight:700}
-.eyebrow{font-size:11px;color:#87929a;font-weight:800;letter-spacing:.20em}.intro{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin:0 0 24px}.intro h1{font-size:clamp(25px,4vw,38px);letter-spacing:-.05em;line-height:1.27;margin:10px 0 9px;font-weight:850}.intro p{font-size:13px;line-height:1.8;color:var(--sub);margin:0;max-width:600px}.tag{white-space:nowrap;border-radius:100px;background:#fff;padding:8px 12px;font-size:11px;color:#717e87;border:1px solid var(--line);font-weight:800}
-.level-nav{display:flex;align-items:center;gap:9px;overflow:auto;scrollbar-width:none;padding:2px 2px 20px}.level-nav::-webkit-scrollbar{display:none}.level-btn{min-width:49px;height:42px;border-radius:13px;border:1px solid var(--line);background:#fff;color:#89939c;font-size:12px;font-weight:800;flex-shrink:0;display:flex;gap:4px;align-items:center;justify-content:center;transition:.2s}.level-btn.current{background:var(--dark);color:white;border-color:var(--dark);box-shadow:0 6px 16px #26384922}.level-btn.completed:not(.current){border-color:#adc9b8;color:#467b60;background:#f5fbf6}.level-divider{height:1px;background:var(--line);width:12px;flex-shrink:0}
-.level-banner{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:17px}.level-banner h2{font-size:18px;font-weight:820;letter-spacing:-.03em;margin:3px 0 5px}.level-banner .desc{font-size:12px;color:var(--sub);line-height:1.7;max-width:630px}.level-tag{background:#eee9e1;color:#7c7770;padding:7px 11px;border-radius:999px;font-size:10px;font-weight:800;white-space:nowrap;letter-spacing:.06em}
-.game-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:16px;align-items:start}.panel{border-radius:22px;border:1px solid #ebe9e3;background:#fff;box-shadow:var(--shadow);padding:20px}.board-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.panel-title{font-weight:820;font-size:14px;letter-spacing:-.02em}.tiny{font-size:10px;color:#99a0a7}.board-canvas{background:#fcfbf9;border:1px solid #eeeae3;border-radius:17px;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;overflow:hidden;position:relative}.board-canvas svg{width:100%;height:100%;display:block}.board-corner{position:absolute;top:13px;left:13px;font-size:10px;letter-spacing:.06em;color:#a3a7ad;font-weight:800}.board-corner.right{left:auto;right:13px}.legend{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.legend-item{display:flex;gap:7px;align-items:center;padding:6px 9px;border-radius:8px;background:#f8f8f6;font-size:11px;color:#5e6870;transition:.17s;cursor:pointer;border:1px solid transparent}.legend-item.active{border-color:#c7d5dd;background:#f1f7fa}.legend-swatch{width:10px;height:10px;border-radius:3px}.board-note{margin:13px 0 0;color:#8a929a;line-height:1.75;font-size:11px;min-height:20px}
-.goal{background:#f3f6f7;border-radius:13px;padding:14px 15px;margin-bottom:17px}.goal-top{display:flex;align-items:center;justify-content:space-between}.goal-top .label{font-size:10px;color:#80909d;font-weight:800;letter-spacing:.09em}.goal-top .qty{font-weight:850;color:#263b4b;font-size:23px;letter-spacing:-.045em}.goal-sub{font-size:11px;color:#8b969f;margin-top:2px}.stack-label{display:flex;align-items:center;justify-content:space-between;margin:2px 0 12px}.stack-small{font-size:10px;color:#9aa2a9;font-weight:650}.stack-list{display:flex;flex-direction:column;gap:9px;position:relative}.stack-card{touch-action:pan-y;position:relative;display:flex;gap:10px;align-items:center;width:100%;border:1px solid #e7e7e2;border-radius:13px;background:#fff;min-height:69px;padding:10px 11px;transition:background .15s,border-color .15s,box-shadow .15s;cursor:pointer;user-select:none;-webkit-user-select:none}.stack-card:hover{border-color:#cbd4da}.stack-card.selected{background:#f6f9fa;border-color:#92b2c3;box-shadow:0 0 0 2px #a5beca22}.stack-card.drop-on{border-color:#387f95;box-shadow:0 0 0 2px #7aaebc65}.stack-card.moving{opacity:.35}.stack-index{flex:0 0 33px;text-align:center;color:#82909a;font-size:11px;font-weight:800}.stack-index strong{display:block;font-size:15px;color:#485764}.stack-card:first-child .stack-index strong{color:#ce8e57}.stack-color{flex:0 0 42px;height:39px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:850;font-size:15px;box-shadow:inset 0 -2px 0 #0000000b}.stack-card-main{flex:1;min-width:0}.stack-card-name{font-size:14px;font-weight:850;margin-bottom:3px}.stack-card-meta{font-size:11px;color:#98a0a7;white-space:nowrap}.position-switch{font-size:10px;color:#377d92;border:0;background:#eaf4f6;padding:6px 9px;margin-top:7px;border-radius:6px;font-weight:800;cursor:pointer}.position-switch:active{background:#d7e9ed}.drag-handle{display:grid;place-items:center;flex:0 0 42px;height:46px;margin:-5px -7px -5px 0;color:#94a0a9;font-size:21px;letter-spacing:-3px;touch-action:none;cursor:grab;border-radius:9px;user-select:none}.drag-handle:active{cursor:grabbing;background:#e9eff2}.drag-ghost{position:fixed;pointer-events:none;z-index:9999;background:#fff;border:1.5px solid #8daec1;border-radius:13px;box-shadow:0 18px 35px #172a3a2d;display:flex;align-items:center;gap:10px;padding:10px 11px;opacity:.96;transform:rotate(-1deg);height:69px;box-sizing:border-box}.stack-instruction{font-size:10px;color:#96a0a9;margin:11px 0 18px;line-height:1.7}.cta{width:100%;min-height:52px;border:0;background:#273e4e;color:#fff;font-weight:800;border-radius:13px;font-size:13px;letter-spacing:.025em;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 7px 18px #273e4e23;transition:transform .15s,background .15s}.cta:active{transform:scale(.985)}.cta:hover{background:#34546a}.cta.success{background:#5d977e}.secondary-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:12px}.text-btn{border:0;background:transparent;font-size:11px;color:#738798;font-weight:780;padding:11px 2px}.text-btn:hover{color:#263c4b}.hint-box{border:1px solid #e7e5dd;background:#fbfaf5;border-radius:12px;padding:13px 14px;margin-top:13px;color:#5a6370;font-size:12px;line-height:1.8}.hint-top{font-size:10px;letter-spacing:.1em;font-weight:800;color:#ac9368;margin-bottom:5px}.hint-box p{margin:0}
-.result{margin-top:16px;border-top:1px solid var(--line);padding-top:17px;animation:fadeIn .24s ease}.result h3{font-size:17px;margin:3px 0 9px;letter-spacing:-.04em}.result p{font-size:12px;color:#82909a;line-height:1.75;margin:0 0 14px}.result .status-eyebrow{font-size:10px;letter-spacing:.1em;font-weight:850;color:#a88a67}.result .status-eyebrow.win{color:#4d9a79}.area-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.area-tile{border-radius:10px;background:#f8f8f6;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:6px}.area-tile .n{display:flex;gap:6px;align-items:center;color:#596774;font-size:11px;font-weight:780}.area-tile .v{font-size:15px;font-weight:820;color:#bf806c}.area-tile.ok .v{color:#59967e}.explanation{margin-top:13px;padding:12px;border-radius:11px;background:#f4f8f5;color:#5d7970;font-size:11px;line-height:1.85}.explanation strong{color:#345a49}
-.footer{margin-top:27px;font-size:11px;color:#9aa3a8;line-height:1.9;border-top:1px solid #e8e6df;padding-top:16px;display:flex;justify-content:space-between;gap:20px}.footer button{border:0;background:transparent;color:#8494a1;font-size:11px;font-weight:750;padding:0}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:720px){.wrapper{padding:19px 15px 44px;max-width:480px}header{padding-bottom:24px}.intro{margin-bottom:19px}.intro h1{font-size:28px}.intro p{font-size:12px}.tag{display:none}.level-nav{padding-bottom:14px}.game-grid{grid-template-columns:1fr;gap:12px}.panel{padding:16px;border-radius:19px}.board-canvas{aspect-ratio:1/.88}.board-heading{margin-bottom:10px}.goal{margin-bottom:15px}.footer{padding-top:15px}.level-banner{margin-bottom:11px}.stack-card{min-height:64px}.board-note{margin-top:9px}.result{margin-top:13px}.brand{font-size:12px}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+:root{--bg:#f7f6f2;--ink:#263444;--sub:#7c8793;--line:#e7e7e2;--white:#fff;--accent:#276779;--red:#e68a78;--blue:#77a4d3;--yellow:#e9be68;--green:#7db49a;--shadow:0 10px 36px #2f3b5110}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;}body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;-webkit-font-smoothing:antialiased}button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid #6db9cc;outline-offset:2px}button:disabled{opacity:.3;cursor:default}svg{display:block}.shell{max-width:1070px;padding:22px 20px 72px;margin:auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:29px}.brand{display:flex;align-items:center;gap:10px;font-weight:850;letter-spacing:.16em;font-size:13px}.mark{width:33px;height:33px;border:1.5px solid #2a4552;border-radius:9px;display:grid;place-items:center;position:relative}.mark i{position:absolute;width:16px;height:17px;transform:rotate(-10deg) translate(-3px,-2px);background:#77a4d3;border:1px solid white}.mark i+ i{background:#e68a78;transform:rotate(12deg) translate(3px,2px)}.header-side{font-size:11px;color:#9aa3aa;font-weight:720;letter-spacing:.11em}.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin-bottom:15px}.eyebrow{font-size:10px;font-weight:820;color:#87939b;letter-spacing:.16em}.intro h1{font-size:clamp(23px,3vw,34px);letter-spacing:-.055em;line-height:1.25;margin:6px 0}.intro p{color:var(--sub);font-size:12px;line-height:1.8;margin:4px 0 0}.version{font-size:11px;padding:8px 10px;border:1px solid #e7e7e2;border-radius:99px;color:#89949e;background:white;white-space:nowrap}
+.stages{display:flex;align-items:center;gap:8px;overflow:auto;scrollbar-width:none;padding:4px 2px 17px}.stages::-webkit-scrollbar{display:none}.stage-btn{flex:0 0 auto;width:45px;height:40px;border-radius:12px;background:white;border:1px solid #e5e7e7;color:#89959b;font-size:12px;font-weight:850}.stage-btn.active{background:#294653;border-color:#294653;color:white;box-shadow:0 4px 13px #21495b24}.stage-btn.done:not(.active){background:#f1f9f4;color:#578874;border-color:#c8dfd1}
+.work{display:grid;grid-template-columns:minmax(0,1.10fr) minmax(330px,.90fr);gap:15px;align-items:start}.panel{background:white;border:1px solid #e9e8e2;border-radius:21px;padding:19px;box-shadow:var(--shadow);min-width:0}.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:13px}.panel-head .title{font-size:14px;letter-spacing:-.025em;font-weight:850}.sub{font-size:11px;color:#9aa2a9;line-height:1.7}.goal-title{display:flex;align-items:center;justify-content:space-between;margin:17px 0 9px;font-size:11px;font-weight:850}.goal-title span:last-child{font-weight:650;color:#a6abb0;font-size:10px}.goal-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:15px}.goal-chip{background:#f7f8f8;border-radius:11px;padding:10px 8px;min-width:0;display:flex;align-items:center;gap:6px}.dot{display:inline-block;width:9px;height:9px;border-radius:3px;flex:0 0 9px}.goal-chip .name{font-size:11px;font-weight:820;color:#596670}.goal-chip .amount{margin-left:auto;font-size:18px;letter-spacing:-.055em;font-weight:850;color:#2c4050}.board-box{background:#faf9f6;border:1px solid #e8e8e2;border-radius:15px;padding:10px;position:relative;overflow:hidden}.board-box svg{width:100%;height:auto;touch-action:none;user-select:none;cursor:crosshair;max-height:520px}.board-topline{display:flex;justify-content:space-between;margin-bottom:7px;color:#929da5;font-size:10px;font-weight:800;letter-spacing:.05em}.board-topline em{font-style:normal;color:#477b83}.board-caption{font-size:11px;color:#87949d;line-height:1.7;margin:10px 0 0;min-height:18px}.board-caption strong{color:#3b7383}.rule-brief{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:11px;color:#778794;background:#f4f7f7;border-radius:12px;padding:12px;margin-bottom:18px;line-height:1.6}.rule-brief strong{color:#3b6876}.section-caption{display:flex;align-items:center;justify-content:space-between;font-weight:850;letter-spacing:-.01em;font-size:14px;margin-bottom:12px}.section-caption small{font-size:10px;color:#9fa9b0;font-weight:700}.paper-list{display:flex;flex-direction:column;gap:8px;touch-action:pan-y}.tile{border:1px solid #e7e9e7;border-radius:13px;display:flex;gap:8px;align-items:stretch;padding:7px;background:#fff;min-height:70px;transition:box-shadow .15s,border-color .15s,background .15s}.tile.active{border-color:#83b6c2;box-shadow:0 0 0 2px #bfdde344;background:#fbfdfd}.tile-main{display:flex;gap:10px;align-items:center;flex:1;min-width:0;touch-action:none;user-select:none;cursor:grab}.tile-main:active{cursor:grabbing}.paper-icon{width:40px;height:44px;flex:0 0 40px;border-radius:8px;display:grid;place-items:center;font-size:17px;font-weight:900;color:#fff;box-shadow:inset 0 -2px 0 #0000000a}.tile-txt{min-width:0}.tile-name{font-size:13px;font-weight:850;white-space:nowrap}.tile-meta{font-size:10px;color:#98a1a9;margin-top:4px;white-space:nowrap}.tile-tools{display:flex;align-items:center;gap:4px}.tool-btn{width:30px;height:35px;border:0;border-radius:8px;background:#f2f5f5;color:#59717b;font-size:15px;font-weight:850;line-height:1;display:grid;place-items:center}.tool-btn:active{background:#ddeced}.tool-btn.rotate{font-size:19px;color:#447e8c}.stack-key{font-size:10px;color:#95a1a8;padding:8px 2px 13px;line-height:1.75}.stack-key b{color:#607480}.stack-key .arrow{font-weight:900;color:#487b83}.action{border:0;background:#284757;color:#fff;font-size:14px;font-weight:820;width:100%;min-height:52px;border-radius:13px;box-shadow:0 6px 17px #263e5325;transition:transform .14s,background .14s}.action:active{transform:scale(.985)}.action.win{background:#53967f}.secondary-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}.text-btn{border:0;background:transparent;padding:10px 4px;font-size:11px;font-weight:790;color:#7c929c}.text-btn:active{color:#2c5966}.hint-panel,.results{border-radius:13px;margin-top:12px;padding:14px 13px;background:#f8f6f0;border:1px solid #ede9df}.hint-panel{font-size:12px;line-height:1.85;color:#5c6871}.hint-title{font-size:10px;letter-spacing:.12em;font-weight:850;color:#b18b58;margin-bottom:5px}.hint-panel p{margin:0}.example-btn{margin-top:10px;border:1px solid #dfd4be;background:#fffefc;border-radius:8px;padding:7px 10px;color:#926e46;font-size:11px;font-weight:850}.results{background:#f8faf9;border-color:#e0ebe7}.results.error{background:#fcf9f5;border-color:#eee5d8}.results .eyebrow{color:#689783}.results.error .eyebrow{color:#c08e66}.results h3{font-size:16px;letter-spacing:-.035em;margin:5px 0 6px}.results p{color:#7d898e;font-size:11px;line-height:1.7;margin:5px 0 11px}.area-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.area-card{border-radius:9px;background:white;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:11px;font-weight:750}.area-card .actual{font-size:15px;font-weight:900;color:#b17d69}.area-card.ok .actual{color:#5b9a80}.area-card .target{font-size:10px;color:#9ea7af;font-weight:650}.footnote{margin-top:12px;font-size:10px;color:#98a3aa;line-height:1.85}.footer{margin-top:23px;border-top:1px solid #e5e8e6;padding-top:15px;color:#9ba5ac;font-size:11px;line-height:1.8;display:flex;justify-content:space-between;gap:16px}.mobile-warning{display:none}.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0)}
+@media(max-width:810px){.work{grid-template-columns:1fr}.shell{max-width:560px;padding:17px 14px 46px}header{margin-bottom:22px}.intro h1{font-size:27px}.version{display:none}.panel{padding:15px;border-radius:17px}.board-box{padding:7px}.stages{padding-bottom:12px;gap:5px}.stage-btn{width:39px;height:39px}.rule-brief{margin-bottom:13px}.board-caption{margin-top:8px}.paper-list{gap:7px}.tile{min-height:62px}.goal-title{margin-top:14px}.footer{margin-top:17px}.board-box svg{max-height:470px}}@media(max-width:370px){.shell{padding:13px 10px}.panel{padding:11px}.tile-main{gap:6px}.tool-btn{width:27px}.paper-icon{width:35px;flex-basis:35px}.tile-tools{gap:2px}.goal-chip{padding:9px 6px;gap:4px}.goal-chip .amount{font-size:16px}}
+@media(prefers-reduced-motion:reduce){*,*:after,*:before{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
-<div class="wrapper">
-  <header><div class="brand"><div class="logo" aria-hidden="true">▤</div> PAPER STACK</div><div class="header-status">数学 × ひらめき</div></header>
-  <section class="intro"><div><div class="eyebrow">A PUZZLE OF HIDDEN AREAS</div><h1>見えない部分を、考える。</h1><p>最初は<strong>紙の順番</strong>を、後半は<strong>紙の位置と順番</strong>を推理。見えている面積を同じにしよう。</p></div><div class="tag">MATH / LOGIC / PAPER</div></section>
-  <nav class="level-nav" id="levelNav" aria-label="問題を選ぶ"></nav>
-  <section class="level-banner"><div><div class="eyebrow" id="stageEyebrow">STAGE 01</div><h2 id="stageName">—</h2><div class="desc" id="stageDesc"></div></div><div class="level-tag" id="stageTag">入門</div></section>
-  <main class="game-grid">
-    <section class="panel board-panel" aria-label="紙の見取り図"><div class="board-heading"><span class="panel-title" id="boardTitle">紙の設計図</span><span class="tiny" id="boardStatus">輪郭だけを表示</span></div><div class="board-canvas" id="boardCanvas"></div><div class="legend" id="legend"></div><p class="board-note" id="boardNote">紙の輪郭と位置は固定です。重なる部分も、枠線で確認できます。</p></section>
-    <section class="panel control-panel" aria-label="紙の順番を決める"><div class="goal"><div class="goal-top"><span class="label">GOAL · 見えている色の面積</span><span class="qty" id="goalQty">—</span></div><div class="goal-sub" id="goalSub">—</div></div><div class="stack-label"><span class="panel-title">紙を重ねる順番</span><span class="stack-small">上から ↓ 下へ</span></div><div class="stack-list" id="stackList"></div><p class="stack-instruction">紙を2枚タップすると順番を交換。右端の ≡ で並べ替えもできます。後半は「位置を切替」で紙を動かせます。</p><button class="cta" id="checkBtn">この順番で確かめる <span aria-hidden="true">→</span></button><div class="secondary-row"><button class="text-btn" id="hintBtn">✦ ヒントを見る <span id="hintCount"></span></button><button class="text-btn" id="resetBtn">↺ 最初から</button></div><div class="hint-box" id="hintBox" hidden></div><section class="result" id="result" aria-live="polite" hidden></section></section>
-  </main>
-  <footer class="footer"><div>〈設計図〉は紙の輪郭を示します。色の重なりが分かるのは、答え合わせのときだけ。</div><button id="howBtn">遊び方 ↗</button></footer>
+<div class="shell">
+<header><div class="brand"><div class="mark"><i></i><i></i></div> PAPER STACK</div><div class="header-side">面積を、見抜け。</div></header>
+<section class="intro"><div><div class="eyebrow">RECTANGLES × LOGIC / FREE PLACEMENT</div><h1>重ねて、面積をそろえる。</h1><p>紙の位置も、上下の順番も、自分で決めるパズル。</p></div><span class="version">PROTO / 02</span></section>
+<nav class="stages" id="stages" aria-label="ステージを選ぶ"></nav>
+<main class="work">
+<section class="panel">
+  <div class="panel-head"><div><div class="eyebrow" id="stageIndex">LEVEL 01 / 08</div><div class="title" id="stageName" style="margin-top:6px">重なりの第一歩</div></div><div class="sub" id="boardDims">5 × 4 マス</div></div>
+  <div class="sub" id="stageDescription"></div>
+  <div class="goal-title"><span>完成条件：見えている面積</span><span>1マス＝1</span></div>
+  <div class="goal-row" id="goals"></div>
+  <div class="board-box"><div class="board-topline"><span>キャンバス <em id="coverageLabel">未完成</em></span><span id="boardInfo">紙を選んで配置</span></div><svg id="board" aria-label="紙を重ねる盤面" role="img"></svg></div>
+  <p class="board-caption" id="boardCaption">まず右下の紙を選び、盤面をタップするかドラッグして置こう。</p>
+</section>
+<section class="panel">
+  <div class="rule-brief"><span style="font-size:18px">▤</span><span><strong>ルール：</strong> 盤面をすき間なく覆い、各色の<strong>見える面積</strong>を目標にする。紙は不透明で、上にある紙が下を隠す。</span></div>
+  <div class="section-caption"><span>使う紙と重ね順</span><small>下から ↑ 上へ</small></div>
+  <div class="paper-list" id="papers" aria-label="紙の一覧。下から上の順番"></div>
+  <div class="stack-key"><b>紙をタップ → 盤面をタップ</b>、または<b>ドラッグで移動</b>。<br> <span class="arrow">↻</span> 回転　<span class="arrow">↑ ↓</span> 重ねる順番　／　選択中の紙は点線の輪郭で表示</div>
+  <button class="action" id="checkBtn" type="button">この配置で答え合わせ</button>
+  <div class="secondary-actions"><button class="text-btn" id="hintBtn" type="button">ヒントを見る（0/3）</button><button class="text-btn" id="resetBtn" type="button">最初から</button><button class="text-btn" id="helpBtn" type="button">遊び方</button></div>
+  <div class="hint-panel" id="hintBox" hidden></div>
+  <div class="results" id="results" aria-live="polite" hidden></div>
+</section>
+</main>
+<footer class="footer"><span>全部の紙を盤面の内側に置いてください。紙の回転は90°刻みです。</span><span>Single-file / Offline playable</span></footer>
 </div>
 <script>
 'use strict';
-// すべて 8×8 以内の単位マスの長方形。座標は設計図中で固定。
-// data は全順列を検査し、面積条件を満たす順番が1通りだけのものを採用。
 const LEVELS=[
- {name:'最初の1枚',tag:'入門',description:'2枚の紙を使います。上にある紙は、ほかの紙に隠されない。',goal:6,rects:[[1,1,2,3],[1,1,3,4]],answer:[0,1],initial:[1,0],hints:['一番上の紙には、隠れている部分がありません。見える面積は紙全体の面積と同じです。','2枚の面積は6マスと12マス。見える面積を両方6マスにするなら、どちらを上に置くべきでしょう？','Aを上に置けば、Bは6マスだけ隠れます。するとBの見える面積は12−6＝6マス。']},
- {name:'上から順に決まる',tag:'基礎',description:'3枚の紙へ。1枚決まれば、次に見える面積も決まります。',goal:10,rects:[[1,0,6,5],[3,0,4,5],[4,0,2,5]],answer:[2,1,0],initial:[0,1,2],hints:['一番上に置く紙は、紙全体の面積が10マスでなければいけません。','Cは2×5＝10マスなので、一番上です。Cを上に置くと、Bのうち何マスが隠れますか？','Bは20マス。そのうちCに覆われるのは10マス。Bを2番目にすると10マス見え、最後にAが来ます。']},
- {name:'二重に引かない',tag:'発見',description:'3枚が同じ場所に重なるとき、隠れた面積の数え方が変わります。',goal:12,rects:[[2,3,6,2],[3,3,4,5],[1,2,6,5]],answer:[0,1,2],initial:[2,0,1],hints:['どの紙が、一番上に置くだけで12マス見えるでしょう？','Aは12マス。次のBは20マスのうち8マスがAに隠れるので、12マス見えます。','最後のCはAとBの両方に隠れます。同じ場所をAとBが覆っている部分は、2回ではなく1回だけ引きましょう。']},
- {name:'4枚の階層',tag:'応用',description:'4枚でも考え方は同じ。隠れた範囲を少しずつ確定します。',goal:8,rects:[[2,1,3,4],[0,2,5,4],[4,1,2,4],[2,2,4,5]],answer:[2,0,3,1],initial:[1,3,0,2],hints:['4枚とも8マス見えるなら、一番上の紙の面積は8マスです。','Cの面積は8マス。Cの下でAが見えるのは、Aの12マスからCに隠れる4マスを引いた8マスです。','上から C → A → D → B。3枚目以降は上の紙たちが覆う範囲をひとまとめに考えてください。']},
- {name:'交差する紙',tag:'発展',description:'どの紙の下にどの紙を置くか。見えない領域を重複なく数えます。',goal:12,rects:[[0,2,4,6],[1,4,6,2],[2,3,4,5],[3,2,5,6]],answer:[1,2,0,3],initial:[3,0,1,2],hints:['紙全体の面積が12マスの紙を、一番上に置きます。','Bを上にした場合、Cは20マスのうち8マスが隠れ、12マス見えます。','上から B → C → A → D。AとDの隠れた範囲は、重なりの重複に気をつけて数えましょう。']},
- {name:'見えない面積の連鎖',tag:'挑戦',description:'重なりが多い最終問題。面積が分かると順番も一意に決まります。',goal:12,rects:[[3,2,3,4],[2,0,5,4],[0,1,5,6],[2,2,4,6]],answer:[0,3,1,2],initial:[2,1,3,0],hints:['一番上は全面が見えます。目標12マスと同じ面積の紙を選びましょう。','Aの次にDを置くと、Dの24マスのうち12マスが隠れて、ちょうど12マス見えます。','上から A → D → B → C。最後のCがどの部分で見えるか、設計図で確認してください。']},
- {name:'紙の位置も推理',tag:'新ルール',description:'ここからは6×6の正方形を紙で埋めます。各紙の位置を2通りから選び、順番も決めましょう。',goal:9,options:[[[0,3,4,3],[2,3,4,3]],[[0,0,3,3],[0,3,3,3]],[[0,2,3,4],[3,2,3,4]],[[0,0,6,4],[0,2,6,4]]],answer:[1,2,0,3],positionAnswer:[1,0,0,0],initial:[3,0,2,1],positionInitial:[0,1,1,1],hints:['一番上は9マスの紙。ただし、それだけでは場所は決まりません。見える面積の合計は36マスなので、6×6正方形に空白は作れません。','位置を変えるには、各カードの「位置を切替」をタップします。選んだ紙の設計図に、もう一つの位置が点線で出ます。','上から B → C → A → D。紙の位置は Aだけ②、B・C・Dは①です。正方形が隙間なく埋まります。']},
- {name:'位置と順番の連鎖',tag:'最終問題',description:'位置の切替と紙の順番の両方が必要。正方形の空白と重なりを同時に考えよう。',goal:9,options:[[[0,0,5,4],[1,2,5,4]],[[3,0,3,3],[3,3,3,3]],[[1,0,5,3],[0,3,5,3]],[[0,0,3,4],[3,2,3,4]]],answer:[1,3,2,0],positionAnswer:[0,0,1,1],initial:[0,2,3,1],positionInitial:[1,1,0,0],hints:['まず9マスの紙を最上段に。次に、完成時には6×6の全マスが必ずどれかの色で覆われることを利用します。','大きな紙の位置を変えると、埋まっていなかった端のマスを覆えます。片方の位置ではどうしても空白が残る紙はありませんか？','上から B → D → C → A。紙の位置は A・Bが①、C・Dが②です。各色9マスずつになります。']}
+  {
+    "id": 1,
+    "w": 5,
+    "h": 4,
+    "dims": [
+      [
+        3,
+        3
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        5,
+        4
+      ]
+    ],
+    "targets": [
+      8,
+      4,
+      8
+    ],
+    "solution": {
+      "rects": [
+        [
+          1,
+          0,
+          3,
+          3
+        ],
+        [
+          3,
+          2,
+          2,
+          2
+        ],
+        [
+          0,
+          0,
+          5,
+          4
+        ]
+      ],
+      "order": [
+        2,
+        0,
+        1
+      ]
+    },
+    "nSolutions": 8,
+    "name": "重なりの第一歩",
+    "desc": "まずは3枚。すべてのマスを覆いながら、見える面積を合わせよう。",
+    "clue": "一番上の紙は、ほかの紙に隠されない。",
+    "top": 1
+  },
+  {
+    "id": 2,
+    "w": 6,
+    "h": 4,
+    "dims": [
+      [
+        3,
+        3
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        4,
+        3
+      ]
+    ],
+    "targets": [
+      9,
+      5,
+      10
+    ],
+    "solution": {
+      "rects": [
+        [
+          3,
+          1,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          6,
+          4
+        ],
+        [
+          0,
+          0,
+          4,
+          3
+        ]
+      ],
+      "order": [
+        1,
+        2,
+        0
+      ]
+    },
+    "nSolutions": 4,
+    "name": "隠された2マス",
+    "desc": "紙の面積と、実際に見える面積の差に注目。",
+    "clue": "2枚の重なる部分の面積を考えてみよう。",
+    "top": 0
+  },
+  {
+    "id": 3,
+    "w": 6,
+    "h": 5,
+    "dims": [
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        3,
+        5
+      ]
+    ],
+    "targets": [
+      9,
+      12,
+      9
+    ],
+    "solution": {
+      "rects": [
+        [
+          0,
+          0,
+          4,
+          5
+        ],
+        [
+          0,
+          2,
+          6,
+          2
+        ],
+        [
+          3,
+          0,
+          3,
+          5
+        ]
+      ],
+      "order": [
+        0,
+        2,
+        1
+      ]
+    },
+    "nSolutions": 12,
+    "name": "帯の交差",
+    "desc": "外形は横長。2枚の縦長の紙が、盤面を支えている。",
+    "clue": "一番上の紙を置いた後、残りの縦長の紙を考えよう。",
+    "top": 1
+  },
+  {
+    "id": 4,
+    "w": 7,
+    "h": 4,
+    "dims": [
+      [
+        2,
+        3
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        6,
+        2
+      ]
+    ],
+    "targets": [
+      6,
+      6,
+      6,
+      10
+    ],
+    "solution": {
+      "rects": [
+        [
+          2,
+          1,
+          2,
+          3
+        ],
+        [
+          3,
+          0,
+          4,
+          4
+        ],
+        [
+          0,
+          0,
+          5,
+          4
+        ],
+        [
+          1,
+          0,
+          6,
+          2
+        ]
+      ],
+      "order": [
+        2,
+        1,
+        3,
+        0
+      ]
+    },
+    "nSolutions": 48,
+    "name": "四枚のレイヤー",
+    "desc": "4枚になってもルールは同じ。順番によって見える色が大きく変わる。",
+    "clue": "6マスしかない紙を見つけよう。",
+    "top": 0
+  },
+  {
+    "id": 5,
+    "w": 6,
+    "h": 6,
+    "dims": [
+      [
+        6,
+        2
+      ],
+      [
+        6,
+        6
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        5,
+        4
+      ]
+    ],
+    "targets": [
+      9,
+      9,
+      9,
+      9
+    ],
+    "solution": {
+      "rects": [
+        [
+          0,
+          1,
+          6,
+          2
+        ],
+        [
+          0,
+          0,
+          6,
+          6
+        ],
+        [
+          1,
+          2,
+          3,
+          3
+        ],
+        [
+          0,
+          2,
+          5,
+          4
+        ]
+      ],
+      "order": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    "nSolutions": 72,
+    "name": "四等分",
+    "desc": "4色すべて9マス。紙の大きさはバラバラなのに、同じ面積が見える。",
+    "clue": "どの紙も9マスずつ見える。全体を覆う紙の役割は？",
+    "top": 2
+  },
+  {
+    "id": 6,
+    "w": 8,
+    "h": 5,
+    "dims": [
+      [
+        4,
+        5
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        7,
+        3
+      ],
+      [
+        5,
+        5
+      ]
+    ],
+    "targets": [
+      7,
+      6,
+      18,
+      9
+    ],
+    "solution": {
+      "rects": [
+        [
+          4,
+          0,
+          4,
+          5
+        ],
+        [
+          2,
+          2,
+          3,
+          2
+        ],
+        [
+          1,
+          0,
+          7,
+          3
+        ],
+        [
+          0,
+          0,
+          5,
+          5
+        ]
+      ],
+      "order": [
+        3,
+        0,
+        2,
+        1
+      ]
+    },
+    "nSolutions": 28,
+    "name": "大きな重なり",
+    "desc": "横8×縦5。途中で2枚以上が重なる場所を丁寧に扱おう。",
+    "clue": "一番上の紙を置くと、下の紙の見え方が変わる。",
+    "top": 1
+  },
+  {
+    "id": 7,
+    "w": 5,
+    "h": 8,
+    "dims": [
+      [
+        5,
+        5
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "targets": [
+      6,
+      18,
+      8,
+      8
+    ],
+    "solution": {
+      "rects": [
+        [
+          0,
+          0,
+          5,
+          5
+        ],
+        [
+          1,
+          1,
+          3,
+          7
+        ],
+        [
+          0,
+          4,
+          5,
+          4
+        ],
+        [
+          3,
+          0,
+          2,
+          4
+        ]
+      ],
+      "order": [
+        0,
+        2,
+        1,
+        3
+      ]
+    },
+    "nSolutions": 20,
+    "name": "縦長の塔",
+    "desc": "今度は縦長。上下から覆う発想も使ってみよう。",
+    "clue": "縦長の紙は、横向きにも回転できる。",
+    "top": 3
+  },
+  {
+    "id": 8,
+    "w": 9,
+    "h": 6,
+    "dims": [
+      [
+        3,
+        4
+      ],
+      [
+        8,
+        3
+      ],
+      [
+        6,
+        6
+      ],
+      [
+        5,
+        6
+      ]
+    ],
+    "targets": [
+      12,
+      21,
+      9,
+      12
+    ],
+    "solution": {
+      "rects": [
+        [
+          2,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          8,
+          3
+        ],
+        [
+          0,
+          0,
+          6,
+          6
+        ],
+        [
+          4,
+          0,
+          5,
+          6
+        ]
+      ],
+      "order": [
+        2,
+        3,
+        1,
+        0
+      ]
+    },
+    "nSolutions": 36,
+    "name": "最後の一手",
+    "desc": "大きな長方形を完成させよう。見える面積の連鎖をたどる。",
+    "clue": "小さな紙を最初に置いてみると、ほかの紙の位置が見えやすくなる。",
+    "top": 0
+  }
 ];
-const COLORS=['#ec8675','#6f9dca','#e5b85f','#79ad9d'];
-const NAMES=['A','B','C','D'];
-let levelIndex=0,order=[],initialOrder=[],positions=[],selected=null,pendingSwap=null,hintIndex=0,checks=0,passed=false,resultData=null,drag=null;
-let completed=new Set();try{completed=new Set(JSON.parse(localStorage.getItem('paperstack-completed')||'[]'));}catch(e){}
+const COLORS=['#e68a78','#77a4d3','#e9be68','#7db49a'];
+const NAMES=['赤','青','黄','緑'];
+const SHORT=['A','B','C','D'];
 const $=id=>document.getElementById(id);
-const esc=s=>String(s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-const area=r=>r[2]*r[3];
-const currentLevel=()=>{const src=LEVELS[levelIndex];return src.options?{...src,rects:src.options.map((opts,i)=>opts[positions[i]])}:src;};
-const contains=(r,x,y)=>x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3];
-function compute(lvl,stack){const counts=Array(lvl.rects.length).fill(0);const cells=[];for(let y=0;y<8;y++){for(let x=0;x<8;x++){const top=stack.find(i=>contains(lvl.rects[i],x,y));if(top!==undefined){counts[top]++;cells.push({x,y,i:top});}}}return{counts,cells,solved:counts.every(v=>v===lvl.goal)};}
-function allPermutations(arr){if(arr.length<=1)return[arr];return arr.flatMap((v,i)=>allPermutations(arr.filter((_,j)=>j!==i)).map(p=>[v,...p]));}
-// 開発時・配布後どちらでも成立を検証。問題は一意解のみ。
-for(const [i,lvl] of LEVELS.entries()){
- const arrangements=lvl.options?[...[0,1]].flatMap(a=>[0,1].flatMap(b=>[0,1].flatMap(c=>[0,1].map(d=>[a,b,c,d])))):[null];
- const sols=[];for(const opts of arrangements){const rs=lvl.options?lvl.options.map((choices,j)=>choices[opts[j]]):lvl.rects;const sub={...lvl,rects:rs};for(const o of allPermutations(rs.map((_,j)=>j))){if(compute(sub,o).solved)sols.push({o,opts});}}
- if(sols.length!==1||sols[0].o.join()!==lvl.answer.join()||(lvl.options&&sols[0].opts.join()!==lvl.positionAnswer.join()))throw new Error(`Level ${i+1} solution error: ${JSON.stringify(sols)}`);
+const elBoard=$('board');
+let stage=0, order=[], placed=[], rotations=[], selected=null, placeMode=false, checks=0, hintCount=0, isSolved=false, showResult=null, drag=null;
+let completed=new Set();
+try{completed=new Set(JSON.parse(localStorage.getItem('paperstack-free-completed')||'[]'));}catch(e){}
+function level(){return LEVELS[stage];}
+function dimensions(i){const d=level().dims[i];return rotations[i]?[d[1],d[0]]:[d[0],d[1]];}
+function clamp(v,lo,hi){return Math.min(hi,Math.max(lo,v));}
+function escapeHtml(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function changeStage(n){stage=n;const l=level();order=l.dims.map((_,i)=>i);placed=l.dims.map(()=>null);rotations=l.dims.map(()=>false);selected=null;placeMode=false;checks=0;hintCount=0;isSolved=false;showResult=null;drag=null;
+ $('stageIndex').textContent=`LEVEL ${String(stage+1).padStart(2,'0')} / ${String(LEVELS.length).padStart(2,'0')}`;
+ $('stageName').textContent=l.name;$('stageDescription').textContent=l.desc;$('boardDims').textContent=`${l.w} × ${l.h} マス`;
+ $('hintBox').hidden=true;$('results').hidden=true;
+ render();}
+function render(){renderStages();renderGoals();renderPapers();renderBoard();renderStatus();}
+function renderStages(){$('stages').innerHTML=LEVELS.map((l,i)=>`<button type="button" class="stage-btn ${stage===i?'active':''} ${completed.has(i)?'done':''}" data-stage="${i}" aria-label="ステージ${i+1} ${completed.has(i)?'クリア済み':''}">${completed.has(i)?'✓':String(i+1).padStart(2,'0')}</button>`).join('');}
+function renderGoals(){$('goals').style.gridTemplateColumns=`repeat(${level().dims.length},minmax(0,1fr))`;$('goals').innerHTML=level().targets.map((v,i)=>`<div class="goal-chip"><span class="dot" style="background:${COLORS[i]}"></span><span class="name">${NAMES[i]}</span><span class="amount">${v}</span></div>`).join('');}
+function renderPapers(){$('papers').innerHTML=order.map((i,j)=>{const [w,h]=dimensions(i);const done=!!placed[i];return `<div class="tile ${selected===i?'active':''}" data-id="${i}"><div class="tile-main" data-select="${i}" role="button" tabindex="0" aria-label="${NAMES[i]}い紙 ${w}かける${h} を選択し、ドラッグして盤面に置く"><div class="paper-icon" style="background:${COLORS[i]}">${SHORT[i]}</div><div class="tile-txt"><div class="tile-name">${NAMES[i]}の紙 <span style="font-weight:650;color:#9da6ad;font-size:10px">${done?'● 配置済み':'○ 未配置'}</span></div><div class="tile-meta">${w} × ${h} ・全 ${w*h} マス　${j===0?'（一番下）':j===order.length-1?'（一番上）':''}</div></div></div><div class="tile-tools"><button type="button" class="tool-btn rotate" data-rotate="${i}" aria-label="${NAMES[i]}の紙を90度回転" title="90度回転" ${w===h?'disabled':''}>↻</button><button type="button" class="tool-btn" data-layer="${i},-1" ${j===0?'disabled':''} title="下へ" aria-label="${NAMES[i]}の紙を一段下に">↓</button><button type="button" class="tool-btn" data-layer="${i},1" ${j===order.length-1?'disabled':''} title="上へ" aria-label="${NAMES[i]}の紙を一段上に">↑</button></div></div>`}).join('');}
+function calc(){const l=level();const counts=l.dims.map(()=>0);const cells=Array(l.w*l.h).fill(-1);const layers=Array(l.w*l.h).fill(0);for(const i of order){const r=placed[i];if(!r)continue;const [w,h]=dimensions(i);for(let y=r.y;y<r.y+h;y++)for(let x=r.x;x<r.x+w;x++){if(x<0||y<0||x>=l.w||y>=l.h)continue;const p=y*l.w+x;cells[p]=i;layers[p]++;}}
+ let uncovered=0,triples=0;for(let n=0;n<cells.length;n++){if(cells[n]===-1)uncovered++;else counts[cells[n]]++;if(layers[n]>=3)triples++;}
+ const allPlaced=placed.every(Boolean);const solved=allPlaced&&uncovered===0&&counts.every((v,i)=>v===l.targets[i]);return{counts,uncovered,triples,allPlaced,solved};}
+function renderStatus(){const c=calc();const n=placed.filter(Boolean).length;$('coverageLabel').textContent=c.uncovered===0?'すき間なし':`空き ${c.uncovered} マス`;$('boardInfo').textContent=`${n}/${placed.length} 枚 配置済み`;$('checkBtn').textContent=isSolved?'次のステージへ':'この配置で答え合わせ';$('checkBtn').classList.toggle('win',isSolved);$('hintBtn').textContent=`ヒントを見る（${hintCount}/3）`;$('hintBtn').disabled=hintCount>=3||isSolved;
+ $('boardCaption').innerHTML=selected===null?'紙を選び、キャンバスへドラッグ。タップして配置することもできます。':`<strong>${NAMES[selected]}の紙を選択中</strong>：${placeMode?'盤面の置きたい場所をタップ、またはドラッグ':'紙をドラッグで移動。別の紙も一覧から選べます。'}。`;
 }
-function drawNav(){$('levelNav').innerHTML=LEVELS.map((l,i)=>`<button class="level-btn ${i===levelIndex?'current':''} ${completed.has(i)?'completed':''}" data-level="${i}" aria-label="ステージ${i+1} ${esc(l.name)}" aria-current="${i===levelIndex?'step':'false'}">${completed.has(i)&&i!==levelIndex?'✓':String(i+1).padStart(2,'0')}</button>`).join('<span class="level-divider"></span>');$('levelNav').querySelectorAll('[data-level]').forEach(b=>b.addEventListener('click',()=>loadLevel(+b.dataset.level)));}
-function loadLevel(i){levelIndex=(i+LEVELS.length)%LEVELS.length;const lvl=LEVELS[levelIndex];order=lvl.initial.slice();initialOrder=lvl.initial.slice();positions=lvl.options?lvl.positionInitial.slice():[];selected=null;pendingSwap=null;hintIndex=0;checks=0;passed=false;resultData=null;$('stageEyebrow').textContent=`STAGE ${String(i+1).padStart(2,'0')} / ${String(LEVELS.length).padStart(2,'0')}`;$('stageName').textContent=lvl.name;$('stageDesc').textContent=lvl.description;$('stageTag').textContent=lvl.tag;$('goalQty').innerHTML=`${lvl.goal}<span style="font-size:12px;letter-spacing:0;margin-left:2px">マスずつ</span>`;$('goalSub').textContent=`${lvl.options?lvl.options.length:lvl.rects.length}色とも同じ面積に。${lvl.options?'6×6正方形のすべてのマスを覆う。':`全体では ${lvl.goal*lvl.rects.length} マスが見えます。`}`;$('hintBox').hidden=true;$('result').hidden=true;drawNav();renderAll();}
-function renderAll(){renderBoard();renderLegend();renderStack();$('checkBtn').innerHTML=passed?levelIndex===LEVELS.length-1?'もう一度、最初から ↗':'次の問題へ →':'この順番で確かめる →';$('checkBtn').classList.toggle('success',passed);$('hintBtn').disabled=passed||hintIndex>=3;$('hintCount').textContent=hintIndex?` ${hintIndex}/3`:'';}
-function boardGeometry(lvl){const xs=lvl.rects.map(r=>r[0]),ys=lvl.rects.map(r=>r[1]),xe=lvl.rects.map(r=>r[0]+r[2]),ye=lvl.rects.map(r=>r[1]+r[3]);let x0=lvl.options?0:Math.min(...xs),y0=lvl.options?0:Math.min(...ys),x1=lvl.options?6:Math.max(...xe),y1=lvl.options?6:Math.max(...ye);const cols=x1-x0,rows=y1-y0;const scale=Math.min(80,335/Math.max(cols,rows)),view=440;const contentW=cols*scale,contentH=rows*scale;let ox=(view-contentW)/2,oy=(view-contentH)/2;return {x0,y0,x1,y1,cols,rows,scale,ox,oy,view};}
-function renderBoard(){const lvl=currentLevel(),g=boardGeometry(lvl),isResult=Boolean(resultData);const {x0,y0,cols,rows,scale:s,ox,oy}=g;let svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440" role="img" aria-label="${isResult?'重ねた結果':'各紙の輪郭を描いた設計図'}">`;svg+=`<rect x="${ox}" y="${oy}" width="${cols*s}" height="${rows*s}" rx="2" fill="#fffdfa" stroke="#e7e4de" stroke-width="1.5"/>`;for(let x=0;x<=cols;x++){svg+=`<line x1="${ox+x*s}" y1="${oy}" x2="${ox+x*s}" y2="${oy+rows*s}" stroke="#e9e7e2" stroke-width="1"/>`;}for(let y=0;y<=rows;y++){svg+=`<line x1="${ox}" y1="${oy+y*s}" x2="${ox+cols*s}" y2="${oy+y*s}" stroke="#e9e7e2" stroke-width="1"/>`;}
-if(isResult){for(const cell of resultData.cells){const x=ox+(cell.x-x0)*s,y=oy+(cell.y-y0)*s;svg+=`<rect x="${x+.9}" y="${y+.9}" width="${s-1.8}" height="${s-1.8}" fill="${COLORS[cell.i]}"/>`;}
- for(const i of lvl.rects.map((_,j)=>j)){const r=lvl.rects[i],x=ox+(r[0]-x0)*s,y=oy+(r[1]-y0)*s;svg+=`<rect x="${x}" y="${y}" width="${r[2]*s}" height="${r[3]*s}" fill="none" stroke="${COLORS[i]}" stroke-width="2" stroke-dasharray="7 5" opacity=".48"/>`;} }
-else{const indices=lvl.rects.map((_,j)=>j);const sorted=selected==null?indices:indices.filter(i=>i!==selected).concat([selected]);for(const i of sorted){const r=lvl.rects[i],x=ox+(r[0]-x0)*s,y=oy+(r[1]-y0)*s,has=selected===i,dim=selected!==null&&!has;svg+=`<rect x="${x}" y="${y}" width="${r[2]*s}" height="${r[3]*s}" rx="1.5" fill="${has?COLORS[i]:'#fffdfa'}" fill-opacity="${has?.16:0}" stroke="${COLORS[i]}" stroke-width="${has?4:2.5}" stroke-dasharray="${has?'':'7 5'}" opacity="${dim?.24:.94}"/>`;}for(const i of sorted){const r=lvl.rects[i],collisions=sorted.filter(j=>j!==i&&j<i&&lvl.rects[j][0]===r[0]&&lvl.rects[j][1]===r[1]).length,x=ox+(r[0]-x0)*s+6+30*collisions,y=oy+(r[1]-y0)*s+6,has=selected===i,dim=selected!==null&&!has;svg+=`<g opacity="${dim?.25:1}"><rect x="${x}" y="${y}" width="24" height="24" rx="7" fill="${COLORS[i]}" stroke="#fff" stroke-width="1.7"/><text x="${x+12}" y="${y+17}" font-size="14" font-weight="800" fill="#fff" text-anchor="middle" font-family="-apple-system,sans-serif">${NAMES[i]}</text></g>`;}}
-if(!isResult&&lvl.options&&selected!==null){const alt=lvl.options[selected][1-positions[selected]],xx=ox+(alt[0]-x0)*s,yy=oy+(alt[1]-y0)*s;svg+=`<rect class="alt-pos" data-alt="${selected}" x="${xx}" y="${yy}" width="${alt[2]*s}" height="${alt[3]*s}" fill="${COLORS[selected]}" fill-opacity=".07" stroke="${COLORS[selected]}" stroke-width="2.5" stroke-dasharray="4 9" style="cursor:pointer"/><text x="${xx+alt[2]*s/2}" y="${yy+alt[3]*s/2}" text-anchor="middle" font-size="13" fill="#576e78" font-weight="800" pointer-events="none">移動先をタップ</text>`;}
-svg+='</svg>';$('boardCanvas').innerHTML=`<span class="board-corner">${isResult?'VISIBLE AREA':'BLUEPRINT'}</span><span class="board-corner right">1 □ = 1 マス</span>${svg}`;$('boardCanvas').querySelectorAll('.alt-pos').forEach(el=>el.addEventListener('click',()=>changePosition(+el.dataset.alt)));$('boardTitle').textContent=isResult?'重ねた結果':'紙の設計図';$('boardStatus').textContent=isResult?'実際に見える色':'輪郭だけを表示';$('boardNote').textContent=isResult?'色がついた部分が実際に見える面積です。並べ替えや位置変更で設計図に戻れます。':lvl.options?'6×6の正方形をすき間なく覆おう。紙を選び、点線の移動先をタップして位置変更できます。':'紙の色つき枠線は、1枚ごとの外周。紙を選ぶと位置を強調表示します。';}
-function renderLegend(){const lvl=currentLevel();$('legend').innerHTML=lvl.rects.map((r,i)=>`<button class="legend-item ${selected===i?'active':''}" data-legend="${i}"><span class="legend-swatch" style="background:${COLORS[i]}"></span><b>${NAMES[i]}</b> ${r[2]}×${r[3]} <span style="color:#9da4aa">(${area(r)})</span></button>`).join('');$('legend').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{selected=selected===+b.dataset.legend?null:+b.dataset.legend;pendingSwap=null;renderAll();}));}
-function renderStack(){const lvl=currentLevel();$('stackList').innerHTML=order.map((i,pos)=>{const r=lvl.rects[i];return `<div class="stack-card ${selected===i?'selected':''}" data-card="${i}" tabindex="0" role="button" aria-label="${pos+1}番目の紙 ${NAMES[i]} ${r[2]}かける${r[3]}。タップで入れ替え"><div class="stack-index"><strong>${String(pos+1).padStart(2,'0')}</strong>${pos===0?'一番上':pos===order.length-1?'一番下':'↓'}</div><div class="stack-color" style="background:${COLORS[i]}">${NAMES[i]}</div><div class="stack-card-main"><div class="stack-card-name">${NAMES[i]} の紙</div><div class="stack-card-meta">${r[2]} × ${r[3]} ／ 全 ${area(r)} マス</div>${lvl.options?`<button class="position-switch" data-move="${i}" type="button">↔ 位置を切替　${positions[i]===0?'①':'②'}</button>`:''}</div><div class="drag-handle" role="img" aria-label="つかんで並べ替え">≡</div></div>`;}).join('');$('stackList').querySelectorAll('.position-switch').forEach(btn=>btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();changePosition(+btn.dataset.move);}));$('stackList').querySelectorAll('.stack-card').forEach(el=>{el.addEventListener('click',(e)=>{if(drag&&drag.wasDragged)return;const i=+el.dataset.card;if(pendingSwap===null){pendingSwap=i;selected=i;}else if(pendingSwap===i){pendingSwap=null;selected=null;}else{const a=order.indexOf(pendingSwap),b=order.indexOf(i);[order[a],order[b]]=[order[b],order[a]];pendingSwap=null;selected=null;invalidateResult();}renderAll();});el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();moveCard(+el.dataset.card,e.key==='ArrowUp'?-1:1);}});el.querySelector('.drag-handle').addEventListener('pointerdown',e=>startDrag(e,+el.dataset.card));});}
-function invalidateResult(){if(!passed){resultData=null;$('result').hidden=true;}else{passed=false;resultData=null;$('result').hidden=true;}}
-function changePosition(i){if(!LEVELS[levelIndex].options)return;positions[i]=1-positions[i];selected=i;pendingSwap=null;invalidateResult();renderAll();}
-function moveCard(i,dir){const at=order.indexOf(i),to=Math.max(0,Math.min(order.length-1,at+dir));if(at!==to){order.splice(at,1);order.splice(to,0,i);selected=i;pendingSwap=null;invalidateResult();renderAll();}}
-function startDrag(e,i){if(e.button!==0)return;e.preventDefault();e.stopPropagation();let source=e.currentTarget.closest('.stack-card');let rect=source.getBoundingClientRect();drag={i,startY:e.clientY,source,target:i,rect,moved:false,wasDragged:false,ghost:null,pointerId:e.pointerId};source.setPointerCapture(e.pointerId);source.addEventListener('pointermove',onDragMove);source.addEventListener('pointerup',onDragEnd);source.addEventListener('pointercancel',onDragEnd);}
-function onDragMove(e){if(!drag)return;if(Math.abs(e.clientY-drag.startY)>5&&!drag.moved){drag.moved=true;drag.wasDragged=true;drag.source.classList.add('moving');const ghost=document.createElement('div');ghost.className='drag-ghost';ghost.style.width=drag.rect.width+'px';ghost.style.left=drag.rect.left+'px';ghost.innerHTML=drag.source.innerHTML;document.body.appendChild(ghost);drag.ghost=ghost;}if(!drag.moved)return;drag.ghost.style.top=(e.clientY-34)+'px';for(const el of $('stackList').children)el.classList.remove('drop-on');const hovered=document.elementFromPoint(e.clientX,e.clientY)?.closest('.stack-card');if(hovered){drag.target=+hovered.dataset.card;hovered.classList.add('drop-on');}}
-function onDragEnd(e){if(!drag)return;const d=drag;try{d.source.releasePointerCapture(d.pointerId);}catch(err){}d.source.removeEventListener('pointermove',onDragMove);d.source.removeEventListener('pointerup',onDragEnd);d.source.removeEventListener('pointercancel',onDragEnd);if(d.ghost)d.ghost.remove();for(const el of $('stackList').children)el.classList.remove('drop-on','moving');if(d.moved){const from=order.indexOf(d.i),to=order.indexOf(d.target);if(from!==to){order.splice(from,1);order.splice(to,0,d.i);selected=null;pendingSwap=null;invalidateResult();}drag=null;renderAll();}else{drag=null;selected=selected===d.i?null:d.i;pendingSwap=null;renderAll();}}
-function showResult(){checks++;resultData=compute(currentLevel(),order);passed=resultData.solved;if(passed){completed.add(levelIndex);try{localStorage.setItem('paperstack-completed',JSON.stringify([...completed]));}catch(e){}}renderAll();const lvl=currentLevel();const html=`<div class="status-eyebrow ${passed?'win':''}">${passed?'SOLVED':'NOT YET'}</div><h3>${passed?'すべての面積が、そろった！':'あと少し。見える面積を確認しよう'}</h3><p>${passed?'上の紙から順に、隠れる部分をうまく引けました。':'今回の並びで見える面積を表示しています。どの紙が隠れすぎているか確認しましょう。'}</p><div class="area-list">${resultData.counts.map((v,i)=>`<div class="area-tile ${v===lvl.goal?'ok':''}"><span class="n"><span class="legend-swatch" style="background:${COLORS[i]}"></span>${NAMES[i]}</span><span class="v">${v} <span style="font-size:10px;color:#99a2aa;font-weight:600">/ ${lvl.goal}</span> ${v===lvl.goal?'✓':'·'}</span></div>`).join('')}</div>${passed?`<div class="explanation"><strong>考え方：</strong> ${escapeExplanation(lvl,order)}<div style="margin-top:7px">${checks===1&&hintIndex===0?'ヒントなし・1回でクリア。見事！':`答え合わせ ${checks}回 ／ ヒント ${hintIndex}回`}</div></div>`:''}`;$('result').innerHTML=html;$('result').hidden=false;drawNav();renderAll();if(window.innerWidth<=720){setTimeout(()=>{$('result').scrollIntoView({behavior:'smooth',block:'nearest'});},120);}}
-function escapeExplanation(lvl,stack){let up=[];const parts=[];for(const i of stack){let visible=0;for(let y=0;y<8;y++)for(let x=0;x<8;x++){if(contains(lvl.rects[i],x,y)&&!up.some(j=>contains(lvl.rects[j],x,y)))visible++;}const hidden=area(lvl.rects[i])-visible;parts.push(`${NAMES[i]}：${area(lvl.rects[i])}−${hidden}＝${visible}`);up.push(i);}return parts.map(esc).join(' → ');}
-$('checkBtn').addEventListener('click',()=>{if(passed){loadLevel(levelIndex===LEVELS.length-1?0:levelIndex+1);}else{showResult();}});
-$('hintBtn').addEventListener('click',()=>{const lvl=currentLevel();if(hintIndex>=lvl.hints.length)return;const j=hintIndex++;$('hintBox').innerHTML=`<div class="hint-top">HINT ${j+1} / 3</div><p>${esc(lvl.hints[j])}</p>`;$('hintBox').hidden=false;renderAll();});
-$('resetBtn').addEventListener('click',()=>{order=initialOrder.slice();positions=LEVELS[levelIndex].options?LEVELS[levelIndex].positionInitial.slice():[];selected=null;pendingSwap=null;hintIndex=0;checks=0;passed=false;resultData=null;$('hintBox').hidden=true;$('result').hidden=true;renderAll();});
-$('howBtn').addEventListener('click',()=>{alert('【ルール】\n① 設計図の色付きの枠は、各紙の位置・大きさです。すべて不透明な紙です。\n② 紙を上から順に並べ、すべての色の「見える面積」を同じにします。\n③ 紙を2枚タップすると位置を交換。右端の「≡」をドラッグして順番変更もできます。\n④ 「この順番で確かめる」で初めて完成図と面積が分かります。\n⑤ 1マスは1平方単位。最初の6問は位置固定。後半の応用問題では、紙の位置も切り替えます。');});
-loadLevel(0);
+function boardPoint(clientX,clientY){const box=elBoard.getBoundingClientRect(),l=level(),W=l.w*44+44,H=l.h*44+44;if(box.width<=0||box.height<=0)return null;const sx=(clientX-box.left)/box.width*W,sy=(clientY-box.top)/box.height*H;const cellX=(sx-22)/44,cellY=(sy-22)/44;return{x:cellX,y:cellY,inside:cellX>=0&&cellX<l.w&&cellY>=0&&cellY<l.h};}
+function dragTarget(clientX,clientY,piece,anchorX,anchorY){const p=boardPoint(clientX,clientY);if(!p||!p.inside)return null;const [w,h]=dimensions(piece),l=level();return{x:clamp(Math.floor(p.x)-anchorX,0,l.w-w),y:clamp(Math.floor(p.y)-anchorY,0,l.h-h)};}
+function renderBoard(){const l=level();const size=44,margin=22;const totalW=l.w*size+2*margin,totalH=l.h*size+2*margin;elBoard.setAttribute('viewBox',`0 0 ${totalW} ${totalH}`);let s=`<rect x="${margin}" y="${margin}" width="${l.w*size}" height="${l.h*size}" fill="#fff" stroke="#c6cfd0" stroke-width="1.5"/>`;
+ // Soft checkerboard maintains cell boundaries before and after placement.
+ for(let y=0;y<l.h;y++)for(let x=0;x<l.w;x++)if((x+y)%2===1){s+=`<rect x="${margin+x*size}" y="${margin+y*size}" width="${size}" height="${size}" fill="#e6eae7" opacity=".24" pointer-events="none"/>`;}
+ for(const i of order){const r=placed[i];if(!r)continue;const [w,h]=dimensions(i);const dragging=drag&&drag.moved&&drag.i===i;const x=margin+r.x*size,y=margin+r.y*size;
+ s+=`<g data-paper="${i}" style="cursor:grab"><rect data-paper="${i}" x="${x}" y="${y}" width="${w*size}" height="${h*size}" fill="${COLORS[i]}" fill-opacity="${dragging?.42:1}" stroke="#ffffff" stroke-width="2.4"/><rect data-paper="${i}" x="${x+.7}" y="${y+.7}" width="${w*size-1.4}" height="${h*size-1.4}" fill="none" stroke="#000" stroke-opacity=".06" stroke-width="1"/></g>`;
+ }
+ // The grid is intentionally visible, so individual unit squares remain countable.
+ for(let x=1;x<l.w;x++){const xx=margin+x*size;s+=`<line x1="${xx}" y1="${margin}" x2="${xx}" y2="${margin+l.h*size}" stroke="#fff" stroke-opacity=".52" stroke-width="1" pointer-events="none"/>`;}for(let y=1;y<l.h;y++){const yy=margin+y*size;s+=`<line x1="${margin}" y1="${yy}" x2="${margin+l.w*size}" y2="${yy}" stroke="#fff" stroke-opacity=".52" stroke-width="1" pointer-events="none"/>`;}
+ // Outlines let the player locate the selected piece even when another paper covers it.
+ if(selected!==null&&placed[selected]){const r=placed[selected],d=dimensions(selected);s+=`<rect x="${margin+r.x*size+2}" y="${margin+r.y*size+2}" width="${d[0]*size-4}" height="${d[1]*size-4}" fill="none" stroke="#244758" stroke-width="3" stroke-dasharray="8 5" pointer-events="none"/><g pointer-events="none"><rect x="${margin+r.x*size+4}" y="${margin+r.y*size+4}" width="27" height="27" rx="8" fill="#254957"/><text x="${margin+r.x*size+17.5}" y="${margin+r.y*size+23}" text-anchor="middle" font-size="16" fill="white" font-weight="850">${SHORT[selected]}</text></g>`;}
+ if(drag&&drag.moved&&drag.hover){const i=drag.i,p=drag.hover,d=dimensions(i);s+=`<g pointer-events="none"><rect x="${margin+p.x*size}" y="${margin+p.y*size}" width="${d[0]*size}" height="${d[1]*size}" fill="${COLORS[i]}" fill-opacity=".52" stroke="#244758" stroke-width="3" stroke-dasharray="6 4"/><text x="${margin+p.x*size+10}" y="${margin+p.y*size+27}" font-size="20" font-weight="900" fill="#263c4a">${SHORT[i]}</text></g>`;}
+ s+=`<rect x="${margin}" y="${margin}" width="${l.w*size}" height="${l.h*size}" fill="none" stroke="#8c9ca1" stroke-width="1.8" pointer-events="none"/>`;elBoard.innerHTML=s;}
+function invalidate(){showResult=null;isSolved=false;$('results').hidden=true;}
+function placePaper(i,x,y){const l=level(),[w,h]=dimensions(i);if(w>l.w||h>l.h)return;placed[i]={x:clamp(x,0,l.w-w),y:clamp(y,0,l.h-h)};selected=i;placeMode=false;invalidate();render();}
+function rotatePaper(i){const l=level(),d=l.dims[i];if(d[0]===d[1])return;rotations[i]=!rotations[i];const [w,h]=dimensions(i);if(placed[i]){placed[i].x=clamp(placed[i].x,0,l.w-w);placed[i].y=clamp(placed[i].y,0,l.h-h);}selected=i;placeMode=false;invalidate();render();}
+function layerShift(i,shift){const j=order.indexOf(i),k=j+shift;if(k<0||k>=order.length)return;[order[j],order[k]]=[order[k],order[j]];selected=i;placeMode=false;invalidate();render();}
+function startDrag(e,i,source){if(e.button!==0&&e.pointerType==='mouse')return;e.preventDefault();const p=boardPoint(e.clientX,e.clientY);const r=placed[i];const d=dimensions(i);let ax=Math.floor(d[0]/2),ay=Math.floor(d[1]/2);if(source==='board'&&r&&p){ax=clamp(Math.floor(p.x)-r.x,0,d[0]-1);ay=clamp(Math.floor(p.y)-r.y,0,d[1]-1);}drag={i,source,x:e.clientX,y:e.clientY,anchorX:ax,anchorY:ay,moved:false,hover:null,pointerId:e.pointerId};selected=i;placeMode=false;try{e.currentTarget.setPointerCapture(e.pointerId);}catch(err){}renderStatus();}
+function pointerMove(e){if(!drag||e.pointerId!==drag.pointerId)return;const delta=Math.hypot(e.clientX-drag.x,e.clientY-drag.y);if(!drag.moved&&delta<7)return;drag.moved=true;drag.hover=dragTarget(e.clientX,e.clientY,drag.i,drag.anchorX,drag.anchorY);renderBoard();}
+function pointerFinish(e){if(!drag||e.pointerId!==drag.pointerId)return;const d=drag;drag=null;if(d.moved){if(d.hover)placePaper(d.i,d.hover.x,d.hover.y);else render();}else if(d.source==='tray'){selected=d.i;placeMode=true;render();}else if(d.source==='board'){selected=d.i;placeMode=false;render();}else if(d.source==='blank'){const p=boardPoint(e.clientX,e.clientY);if(selected!==null&&p?.inside)placePaper(selected,Math.floor(p.x),Math.floor(p.y));else render();}renderBoard();}
+function check(){if(isSolved){changeStage((stage+1)%LEVELS.length);return;}checks++;const c=calc();isSolved=c.solved;if(isSolved){completed.add(stage);try{localStorage.setItem('paperstack-free-completed',JSON.stringify([...completed]));}catch(e){}}const okColor=i=>c.counts[i]===level().targets[i];
+ const message=isSolved?'ぴったり！ すべての面積が一致した。':!c.allPlaced?'まだ置いていない紙があります。':c.uncovered>0?'盤面にすき間が残っています。':'色ごとの見える面積を見直そう。';
+ $('results').className=`results ${isSolved?'':'error'}`;$('results').hidden=false;
+ $('results').innerHTML=`<div class="eyebrow">${isSolved?'STAGE CLEAR':'CHECK RESULT'}</div><h3>${message}</h3><p>${c.uncovered===0?'盤面はすべて覆われています。':`まだ ${c.uncovered} マスが空いています。`} ${isSolved?'ひとつの紙を動かすと、別の紙の見える面積も変わります。':'次の配置を試すとき、集計結果はいったん隠れます。'}</p><div class="area-grid">${c.counts.map((v,i)=>`<div class="area-card ${okColor(i)?'ok':''}"><span><span class="dot" style="background:${COLORS[i]};margin-right:5px;vertical-align:middle"></span>${NAMES[i]}</span><span class="actual">${v}<span class="target"> / ${level().targets[i]}</span>${okColor(i)?' ✓':''}</span></div>`).join('')}</div><div class="footnote">${isSolved?'解法は一つとは限りません。条件を満たす配置なら正解です。':`チェック ${checks} 回。数値は答え合わせのときだけ表示します。`}</div>`;
+ renderStatus();renderStages();}
+function hint(){if(hintCount>=3||isSolved)return;hintCount++;let msg='';const l=level();if(hintCount===1){msg='一番上に置いた紙は、ほかの紙に隠されません。したがって「紙全体の面積」と「見える面積の目標」が一致する紙が、最上段の候補です。';}else if(hintCount===2){msg=`解答例では「${NAMES[l.top]}の紙」が一番上です。残りの紙について、上の紙に隠される面積を考えましょう。`; }else {let i=l.solution.order[0],r=l.solution.rects[i];msg=`解答例の一つでは、「${NAMES[i]}の紙」が一番下です。左上の位置は、盤面の左から${r[0]+1}列目・上から${r[1]+1}行目です。`;}
+ $('hintBox').innerHTML=`<div class="hint-title">HINT ${hintCount} / 3</div><p>${escapeHtml(msg)}</p>${hintCount===3?'<button type="button" id="sampleBtn" class="example-btn">解答例を実際に配置する</button>':''}`;$('hintBox').hidden=false;renderStatus();}
+function sample(){const l=level();order=l.solution.order.slice();placed=l.solution.rects.map(([x,y])=>({x,y}));rotations=l.solution.rects.map((r,i)=>!(r[2]===l.dims[i][0]&&r[3]===l.dims[i][1]));selected=null;placeMode=false;invalidate();render();$('hintBox').innerHTML='<div class="hint-title">EXAMPLE</div><p>解答例の配置をセットしました。「答え合わせ」で各色の面積を確認できます。</p>';$('hintBox').hidden=false;}
+function help(){window.alert('【遊び方】\n\n1. 全ての紙をキャンバス内に置き、盤面をすき間なく覆います。\n2. 赤・青などの「見えている面積」が目標の数値になれば正解です。紙は不透明です。\n3. 紙をタップ→盤面をタップ、または紙を盤面までドラッグして配置します。配置済みの紙もドラッグで移動できます。\n4. ↻ で90度回転。↑ ↓ で紙の上下順を変更します。上の紙は下の紙を隠します。\n5. 面積の答えは「答え合わせ」のときに表示されます。\n\n紙の位置は完全に自由（1マス刻み）で、正解となる配置は複数存在することがあります。');}
+$('stages').addEventListener('click',e=>{const b=e.target.closest('[data-stage]');if(b)changeStage(+b.dataset.stage);});
+$('papers').addEventListener('click',e=>{const btn=e.target.closest('button');if(!btn)return;if(btn.dataset.rotate!==undefined)rotatePaper(+btn.dataset.rotate);else if(btn.dataset.layer){const [i,s]=btn.dataset.layer.split(',').map(Number);layerShift(i,s);}});
+$('papers').addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;const p=e.target.closest('[data-select]');if(!p)return;startDrag(e,+p.dataset.select,'tray');try{$('papers').setPointerCapture(e.pointerId)}catch(err){};});
+$('papers').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const a=e.target.closest('[data-select]');if(!a)return;e.preventDefault();selected=+a.dataset.select;placeMode=true;render();});
+$('board').addEventListener('pointerdown',e=>{if(e.button!==0&&e.pointerType==='mouse')return;const target=e.target.closest('[data-paper]');if(target&&!placeMode){startDrag(e,+target.dataset.paper,'board');}else if(selected!==null){e.preventDefault();drag={i:selected,source:'blank',x:e.clientX,y:e.clientY,anchorX:0,anchorY:0,moved:false,hover:null,pointerId:e.pointerId};try{elBoard.setPointerCapture(e.pointerId)}catch(err){};}});
+window.addEventListener('pointermove',pointerMove,{passive:false});window.addEventListener('pointerup',pointerFinish);window.addEventListener('pointercancel',e=>{if(!drag)return;drag=null;render();});
+$('checkBtn').addEventListener('click',check);$('hintBtn').addEventListener('click',hint);$('resetBtn').addEventListener('click',()=>changeStage(stage));$('helpBtn').addEventListener('click',help);$('hintBox').addEventListener('click',e=>{if(e.target.id==='sampleBtn')sample();});
+changeStage(0);
 </script>
-</body>
-</html>
+</body></html>
